@@ -65,7 +65,7 @@ describe('Ca kiểm tra BTC (KT_CaKiemTra)', () => {
     const wallet = r.state.vouchers.filter((v) => v.memberId === 'KT-005')
     expect(wallet).toHaveLength(1)
     expect(wallet[0].status).toBe('chua_dung')
-    expect(wallet[0].code).toMatch(/^TEM-[A-Z0-9]{4}-[A-Z0-9]{4}$/)
+    expect(wallet[0].code).toMatch(/^XS-[A-Z0-9]{4}-[A-Z0-9]{4}$/)
   })
 
   it('TC-KT-04: KT-008 đổi KT-VCH-01 → từ chối, số dư vẫn 0', () => {

@@ -86,7 +86,7 @@ NÊN:
 Báo ngắn: đã làm gì, file nào thay đổi, build/push đã xanh chưa, còn gì chưa làm.
 
 ## 10. BỔ SUNG THEO ĐỀ (ưu tiên cao hơn các mục trên nếu mâu thuẫn)
-- Đề: Hệ thống thẻ thành viên 2 đầu (Thành viên & Quầy). Tên app "Tem". --accent #1E5B45.
+- Đề: Hệ thống thẻ thành viên 2 đầu (Thành viên & Quầy). Tên app "XSon". --accent #1E5B45.
 - NGOẠI LỆ MÀU: thẻ thành viên BẮT BUỘC đổi màu theo hạng — Đồng #8A5A3B, Bạc #6F7A86, Vàng #A9802A (nền đặc, chữ trắng). Màu hạng được dùng cho thẻ, chip hạng, thanh phân bố hạng. Mọi bước rà soát "anti-slop" KHÔNG được xóa/làm nhạt màu hạng. Phần UI còn lại vẫn 1 màu nhấn.
 - Nút đúng tên "Nạp dữ liệu mẫu" (không phải "Khôi phục"). Khi chưa có dữ liệu, màn đầu tiên của CẢ HAI vai hiện nút này nổi bật + dòng "Mã thử thống nhất: KT-004". Ngoài ra có ở trang Dữ liệu (vai Quầy).
 - QR: chỉ dùng qrcode.react (tạo) và html5-qrcode (quét, dùng class Html5Qrcode, UI tự làm). Sheet quét có 2 cách: camera + "Tải ảnh QR lên" (Html5Qrcode.scanFile) để giám khảo dùng ảnh QR từ sheet KT_MaQR. Không cài thư viện QR nào khác.

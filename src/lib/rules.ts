@@ -188,10 +188,10 @@ export function generateTxnCode(state: AppState, ctx: Ctx = {}): string {
 function generateVoucherCode(state: AppState, random: () => number): string {
   const used = new Set(state.vouchers.map((v) => v.code))
   for (let i = 0; i < 100; i++) {
-    const code = `TEM-${randomChars(4, random)}-${randomChars(4, random)}`
+    const code = `XS-${randomChars(4, random)}-${randomChars(4, random)}`
     if (!used.has(code)) return code
   }
-  return `TEM-${Date.now().toString(36).toUpperCase()}`
+  return `XS-${Date.now().toString(36).toUpperCase()}`
 }
 
 /** Mã thành viên mới = KT-xxx với số lớn nhất hiện có + 1 (pad 3) → luôn duy nhất. */

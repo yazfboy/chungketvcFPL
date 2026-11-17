@@ -1,1 +1,1 @@
-export const APP_NAME = 'Tem'
+export const APP_NAME = 'XSon'
