@@ -1,0 +1,72 @@
+[
+  {
+    "MaGiaoDich": "TX-KT-001",
+    "LoaiBienDong": "Cộng điểm",
+    "MaThanhVien": "KT-001",
+    "ThoiGian": "2026-10-03 09:15",
+    "GiaTriGiaoDich_VND": "500000",
+    "ThayDoiDiem": "50",
+    "SoDuSauGiaoDich": "250",
+    "GhiChu": "Dữ liệu mẫu đã ghi nhận"
+  },
+  {
+    "MaGiaoDich": "TX-KT-002",
+    "LoaiBienDong": "Cộng điểm",
+    "MaThanhVien": "KT-002",
+    "ThoiGian": "2026-10-04 11:40",
+    "GiaTriGiaoDich_VND": "1500000",
+    "ThayDoiDiem": "150",
+    "SoDuSauGiaoDich": "1450",
+    "GhiChu": "Dữ liệu mẫu đã ghi nhận"
+  },
+  {
+    "MaGiaoDich": "TX-KT-003",
+    "LoaiBienDong": "Đổi ưu đãi",
+    "MaThanhVien": "KT-003",
+    "ThoiGian": "2026-10-05 14:05",
+    "GiaTriGiaoDich_VND": "0",
+    "ThayDoiDiem": "-200",
+    "SoDuSauGiaoDich": "800",
+    "GhiChu": "Dữ liệu mẫu đã ghi nhận"
+  },
+  {
+    "MaGiaoDich": "TX-KT-004",
+    "LoaiBienDong": "Cộng điểm",
+    "MaThanhVien": "KT-004",
+    "ThoiGian": "2026-10-06 18:20",
+    "GiaTriGiaoDich_VND": "2000000",
+    "ThayDoiDiem": "200",
+    "SoDuSauGiaoDich": "3200",
+    "GhiChu": "Dữ liệu mẫu đã ghi nhận"
+  },
+  {
+    "MaGiaoDich": "TX-KT-005",
+    "LoaiBienDong": "Cộng điểm",
+    "MaThanhVien": "KT-005",
+    "ThoiGian": "2026-10-08 10:30",
+    "GiaTriGiaoDich_VND": "8000000",
+    "ThayDoiDiem": "800",
+    "SoDuSauGiaoDich": "5800",
+    "GhiChu": "Dữ liệu mẫu đã ghi nhận"
+  },
+  {
+    "MaGiaoDich": "TX-KT-006",
+    "LoaiBienDong": "Cộng điểm",
+    "MaThanhVien": "KT-006",
+    "ThoiGian": "2026-10-09 16:10",
+    "GiaTriGiaoDich_VND": "5000000",
+    "ThayDoiDiem": "500",
+    "SoDuSauGiaoDich": "12500",
+    "GhiChu": "Dữ liệu mẫu đã ghi nhận"
+  },
+  {
+    "MaGiaoDich": "TX-KT-007",
+    "LoaiBienDong": "Cộng điểm",
+    "MaThanhVien": "KT-007",
+    "ThoiGian": "2026-10-11 12:55",
+    "GiaTriGiaoDich_VND": "7000000",
+    "ThayDoiDiem": "700",
+    "SoDuSauGiaoDich": "4700",
+    "GhiChu": "Dữ liệu mẫu đã ghi nhận"
+  }
+]

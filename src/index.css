@@ -7,8 +7,8 @@
   --text: #111111;
   --text-muted: #5c5c5c;
   --border: #e6e4df;
-  --accent: #1f6f4a;
-  --accent-soft: #e8f1ec;
+  --accent: #1e5b45;
+  --accent-soft: #e6efeb;
   --success: #1f7a3d;
   --warning: #a15c00;
   --danger: #b42318;
@@ -34,6 +34,7 @@
 html,
 body {
   overflow-x: hidden;
+  overflow-x: clip; /* clip không tạo vùng cuộn → header sticky vẫn chạy */
 }
 
 body {

@@ -1,0 +1,65 @@
+[
+  {
+    "MaBienDong": "KT-LS-001",
+    "MaThanhVien": "KT-001",
+    "LoaiBienDong": "Cộng điểm",
+    "ThayDoiDiem": "50",
+    "ThoiGian": "2026-10-03 09:15",
+    "SoDuSauBienDong": "250",
+    "MaGiaoDich": "TX-KT-001"
+  },
+  {
+    "MaBienDong": "KT-LS-002",
+    "MaThanhVien": "KT-002",
+    "LoaiBienDong": "Cộng điểm",
+    "ThayDoiDiem": "150",
+    "ThoiGian": "2026-10-04 11:40",
+    "SoDuSauBienDong": "1450",
+    "MaGiaoDich": "TX-KT-002"
+  },
+  {
+    "MaBienDong": "KT-LS-003",
+    "MaThanhVien": "KT-003",
+    "LoaiBienDong": "Đổi điểm",
+    "ThayDoiDiem": "-200",
+    "ThoiGian": "2026-10-05 14:05",
+    "SoDuSauBienDong": "800",
+    "MaGiaoDich": "TX-KT-003"
+  },
+  {
+    "MaBienDong": "KT-LS-004",
+    "MaThanhVien": "KT-004",
+    "LoaiBienDong": "Cộng điểm",
+    "ThayDoiDiem": "200",
+    "ThoiGian": "2026-10-06 18:20",
+    "SoDuSauBienDong": "3200",
+    "MaGiaoDich": "TX-KT-004"
+  },
+  {
+    "MaBienDong": "KT-LS-005",
+    "MaThanhVien": "KT-005",
+    "LoaiBienDong": "Cộng điểm",
+    "ThayDoiDiem": "800",
+    "ThoiGian": "2026-10-08 10:30",
+    "SoDuSauBienDong": "5800",
+    "MaGiaoDich": "TX-KT-005"
+  },
+  {
+    "MaBienDong": "KT-LS-006",
+    "MaThanhVien": "KT-006",
+    "LoaiBienDong": "Cộng điểm",
+    "ThayDoiDiem": "500",
+    "ThoiGian": "2026-10-09 16:10",
+    "SoDuSauBienDong": "12500",
+    "MaGiaoDich": "TX-KT-006"
+  },
+  {
+    "MaBienDong": "KT-LS-007",
+    "MaThanhVien": "KT-007",
+    "LoaiBienDong": "Cộng điểm",
+    "ThayDoiDiem": "700",
+    "ThoiGian": "2026-10-11 12:55",
+    "SoDuSauBienDong": "4700",
+    "MaGiaoDich": "TX-KT-007"
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "MaThanhVien": "KT-001",
+    "HoTen_Mau": "An Nguyễn",
+    "DienThoai_GiaLap": "0900001001",
+    "DiemDauKy": "200",
+    "DiemHienTai": "250",
+    "HangMauThamKhao": "Đồng",
+    "TrangThai": "Đang hoạt động",
+    "NgayThamGia": "2026-09-05",
+    "MaQR_Payload": "KT-001"
+  },
+  {
+    "MaThanhVien": "KT-002",
+    "HoTen_Mau": "Bình Trần",
+    "DienThoai_GiaLap": "0900001002",
+    "DiemDauKy": "1300",
+    "DiemHienTai": "1450",
+    "HangMauThamKhao": "Bạc",
+    "TrangThai": "Đang hoạt động",
+    "NgayThamGia": "2026-08-17",
+    "MaQR_Payload": "KT-002"
+  },
+  {
+    "MaThanhVien": "KT-003",
+    "HoTen_Mau": "Chi Lê",
+    "DienThoai_GiaLap": "0900001003",
+    "DiemDauKy": "1000",
+    "DiemHienTai": "800",
+    "HangMauThamKhao": "Đồng",
+    "TrangThai": "Đang hoạt động",
+    "NgayThamGia": "2026-07-22",
+    "MaQR_Payload": "KT-003"
+  },
+  {
+    "MaThanhVien": "KT-004",
+    "HoTen_Mau": "Dũng Phạm",
+    "DienThoai_GiaLap": "0900001004",
+    "DiemDauKy": "3000",
+    "DiemHienTai": "3200",
+    "HangMauThamKhao": "Bạc",
+    "TrangThai": "Đang hoạt động",
+    "NgayThamGia": "2026-06-14",
+    "MaQR_Payload": "KT-004"
+  },
+  {
+    "MaThanhVien": "KT-005",
+    "HoTen_Mau": "Hà Võ",
+    "DienThoai_GiaLap": "0900001005",
+    "DiemDauKy": "5000",
+    "DiemHienTai": "5800",
+    "HangMauThamKhao": "Vàng",
+    "TrangThai": "Đang hoạt động",
+    "NgayThamGia": "2026-04-09",
+    "MaQR_Payload": "KT-005"
+  },
+  {
+    "MaThanhVien": "KT-006",
+    "HoTen_Mau": "Minh Đỗ",
+    "DienThoai_GiaLap": "0900001006",
+    "DiemDauKy": "12000",
+    "DiemHienTai": "12500",
+    "HangMauThamKhao": "Vàng",
+    "TrangThai": "Đang hoạt động",
+    "NgayThamGia": "2026-02-28",
+    "MaQR_Payload": "KT-006"
+  },
+  {
+    "MaThanhVien": "KT-007",
+    "HoTen_Mau": "Ngọc Bùi",
+    "DienThoai_GiaLap": "0900001007",
+    "DiemDauKy": "4000",
+    "DiemHienTai": "4700",
+    "HangMauThamKhao": "Bạc",
+    "TrangThai": "Đang hoạt động",
+    "NgayThamGia": "2026-03-11",
+    "MaQR_Payload": "KT-007"
+  },
+  {
+    "MaThanhVien": "KT-008",
+    "HoTen_Mau": "Phúc Hoàng",
+    "DienThoai_GiaLap": "0900001008",
+    "DiemDauKy": "0",
+    "DiemHienTai": "0",
+    "HangMauThamKhao": "Đồng",
+    "TrangThai": "Đang hoạt động",
+    "NgayThamGia": "2026-10-10",
+    "MaQR_Payload": "KT-008"
+  }
+]

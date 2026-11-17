@@ -1,0 +1,66 @@
+[
+  {
+    "MaThanhVien": "KT-004",
+    "HoTen_Mau": "Dũng Phạm",
+    "DiemHienTai": "3200",
+    "HangThamKhao": "Bạc",
+    "PayloadQR": "KT-004",
+    "MaQR_Anh": ""
+  },
+  {
+    "MaThanhVien": "KT-001",
+    "HoTen_Mau": "An Nguyễn",
+    "DiemHienTai": "250",
+    "HangThamKhao": "Đồng",
+    "PayloadQR": "KT-001",
+    "MaQR_Anh": ""
+  },
+  {
+    "MaThanhVien": "KT-002",
+    "HoTen_Mau": "Bình Trần",
+    "DiemHienTai": "1450",
+    "HangThamKhao": "Bạc",
+    "PayloadQR": "KT-002",
+    "MaQR_Anh": ""
+  },
+  {
+    "MaThanhVien": "KT-003",
+    "HoTen_Mau": "Chi Lê",
+    "DiemHienTai": "800",
+    "HangThamKhao": "Đồng",
+    "PayloadQR": "KT-003",
+    "MaQR_Anh": ""
+  },
+  {
+    "MaThanhVien": "KT-005",
+    "HoTen_Mau": "Hà Võ",
+    "DiemHienTai": "5800",
+    "HangThamKhao": "Vàng",
+    "PayloadQR": "KT-005",
+    "MaQR_Anh": ""
+  },
+  {
+    "MaThanhVien": "KT-006",
+    "HoTen_Mau": "Minh Đỗ",
+    "DiemHienTai": "12500",
+    "HangThamKhao": "Vàng",
+    "PayloadQR": "KT-006",
+    "MaQR_Anh": ""
+  },
+  {
+    "MaThanhVien": "KT-007",
+    "HoTen_Mau": "Ngọc Bùi",
+    "DiemHienTai": "4700",
+    "HangThamKhao": "Bạc",
+    "PayloadQR": "KT-007",
+    "MaQR_Anh": ""
+  },
+  {
+    "MaThanhVien": "KT-008",
+    "HoTen_Mau": "Phúc Hoàng",
+    "DiemHienTai": "0",
+    "HangThamKhao": "Đồng",
+    "PayloadQR": "KT-008",
+    "MaQR_Anh": ""
+  }
+]

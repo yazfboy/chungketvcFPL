@@ -14,7 +14,7 @@ Bạn là kỹ sư frontend chính của đội. Đội có 60 phút. Mỗi phas
 - `vite.config.ts`: `base: '/chungketvcFPL/'`.
 - Icon: `lucide-react` (stroke 1.75, size 20). KHÔNG dùng emoji làm icon.
 - Motion: `motion` (import từ `motion/react`).
-- Font: `@fontsource-variable/be-vietnam-pro` (tự host, không phụ thuộc mạng ngoài). Số liệu dùng `font-variant-numeric: tabular-nums`.
+- Font: `@fontsource/be-vietnam-pro` (tự host, không phụ thuộc mạng ngoài). Số liệu dùng `font-variant-numeric: tabular-nums`.
 - Dữ liệu đề: file Excel BTC phát → chuyển 1 lần sang JSON bằng script `scripts/xlsx-to-json.mjs` (thư viện `xlsx`), lưu vào `src/data/*.json`, app import JSON tĩnh. Không parse Excel lúc runtime.
 - Biểu đồ (chỉ khi đề cần): `recharts`.
 
@@ -84,3 +84,35 @@ NÊN:
 
 ## 9. Cuối mỗi câu trả lời
 Báo ngắn: đã làm gì, file nào thay đổi, build/push đã xanh chưa, còn gì chưa làm.
+
+## 10. BỔ SUNG THEO ĐỀ (ưu tiên cao hơn các mục trên nếu mâu thuẫn)
+- Đề: Hệ thống thẻ thành viên 2 đầu (Thành viên & Quầy). Tên app "Tem". --accent #1E5B45.
+- NGOẠI LỆ MÀU: thẻ thành viên BẮT BUỘC đổi màu theo hạng — Đồng #8A5A3B, Bạc #6F7A86, Vàng #A9802A (nền đặc, chữ trắng). Màu hạng được dùng cho thẻ, chip hạng, thanh phân bố hạng. Mọi bước rà soát "anti-slop" KHÔNG được xóa/làm nhạt màu hạng. Phần UI còn lại vẫn 1 màu nhấn.
+- Nút đúng tên "Nạp dữ liệu mẫu" (không phải "Khôi phục"). Khi chưa có dữ liệu, màn đầu tiên của CẢ HAI vai hiện nút này nổi bật + dòng "Mã thử thống nhất: KT-004". Ngoài ra có ở trang Dữ liệu (vai Quầy).
+- QR: chỉ dùng qrcode.react (tạo) và html5-qrcode (quét, dùng class Html5Qrcode, UI tự làm). Sheet quét có 2 cách: camera + "Tải ảnh QR lên" (Html5Qrcode.scanFile) để giám khảo dùng ảnh QR từ sheet KT_MaQR. Không cài thư viện QR nào khác.
+- Ngoại vi: (1) ô mã thành viên/voucher tương thích máy quét mã vạch USB/Bluetooth (autoFocus, Enter để gửi/nhảy ô); (2) tiếng bíp ngắn bằng Web Audio API (OscillatorNode ~880Hz, 120ms) khi quét thành công và khi cộng điểm thành công; (3) navigator.vibrate?.(80) cùng lúc (iOS không hỗ trợ thì bỏ qua êm). Gom vào src/lib/feedback.ts, có công tắc bật/tắt âm thanh.
+- Motion ưu tiên: hiệu ứng cộng điểm (+N nổi lên, số đếm tăng) và màn chúc mừng lên hạng quan trọng hơn intro. Intro giữ đơn giản, ≤1.1s, không được tốn quá 5 phút làm.
+
+## 11. PHẠM VI ĐẦY ĐỦ — PHẢI HOÀN THÀNH HẾT (lõi + mở rộng + điểm thưởng)
+Mỗi phase chỉ làm phần được giao, nhưng thiết kế code từ đầu để chứa đủ danh sách này. Không được tự ý bỏ mục nào.
+LÕI (P1–P2):
+[ ] Đăng ký tên + SĐT, sinh mã KT-xxx duy nhất, hiện trên thẻ
+[ ] Điểm + 3 hạng Đồng/Bạc/Vàng tự đổi theo mốc, thẻ đổi màu theo hạng, mốc công bố ở Thể lệ
+[ ] Chế độ Quầy chuyển vai trong app: mã TV + số tiền → cộng điểm theo tỉ lệ, cập nhật ngay
+[ ] Chống cộng trùng mã giao dịch (báo lỗi, không cộng)
+[ ] Đổi điểm ≥2 mức, trừ đúng điểm, ví ưu đãi
+[ ] Lịch sử biến động: loại, số điểm, thời gian
+[ ] Nút "Nạp dữ liệu mẫu" từ file BTC, mã thử KT-004, pass 5 ca KT_CaKiemTra
+[ ] localStorage, chạy được khi mất mạng
+MỞ RỘNG + ĐIỂM THƯỞNG (P3):
+[ ] QR trên thẻ (payload = mã TV) — điểm thưởng
+[ ] Quét QR bằng camera ở Quầy + tải ảnh QR lên để quét — điểm thưởng
+[ ] Hiệu ứng cộng điểm (+N, số đếm tăng) và màn chúc mừng lên hạng / cảnh báo tụt hạng
+[ ] Thiết bị ngoại vi: camera, máy quét mã vạch USB/Bluetooth (Enter), tiếng bíp Web Audio, rung
+[ ] Thống kê mini: tổng thành viên, tổng điểm đã phát (+ điểm đã đổi, phân bố hạng, giao dịch gần đây)
+[ ] Quầy dùng voucher theo mã (đóng vòng đổi quà → dùng quà)
+[ ] Intro mở đầu ≤1.1s
+HOÀN THIỆN (P4):
+[ ] PWA offline (tải lại trang khi mất mạng vẫn chạy)
+[ ] Rà 360px toàn bộ, README đầy đủ, bảng đối chiếu yêu cầu ↔ màn hình
+Cuối mỗi phase: in lại checklist này, đánh dấu [x] mục đã xong, liệt kê mục còn thiếu.

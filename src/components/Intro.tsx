@@ -2,10 +2,10 @@ import { useEffect } from 'react'
 import { motion } from 'motion/react'
 import { EASE } from '../lib/motion'
 
-/** Intro ≤ 1.2s: wordmark trượt lên, vạch màu nhấn quét ngang. Chạm để bỏ qua. */
+/** Intro ≤ 1.1s: wordmark trượt lên, vạch màu nhấn quét ngang. Chạm để bỏ qua. */
 export function Intro({ name, onDone }: { name: string; onDone: () => void }) {
   useEffect(() => {
-    const t = window.setTimeout(onDone, 1150)
+    const t = window.setTimeout(onDone, 900)
     return () => window.clearTimeout(t)
   }, [onDone])
 
@@ -34,7 +34,7 @@ export function Intro({ name, onDone }: { name: string; onDone: () => void }) {
         className="mt-3 block h-1 w-24 origin-left rounded-full bg-accent"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
-        transition={{ duration: 0.45, delay: 0.35, ease: EASE }}
+        transition={{ duration: 0.4, delay: 0.3, ease: EASE }}
       />
     </motion.div>
   )

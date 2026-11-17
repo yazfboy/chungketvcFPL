@@ -7,13 +7,19 @@ import '@fontsource/be-vietnam-pro/600.css'
 import '@fontsource/be-vietnam-pro/700.css'
 import './index.css'
 import App from './App.tsx'
+import { ToastProvider } from './components/ui/Toast'
+import { AppStoreProvider } from './store/AppStore'
 
 const root = document.getElementById('root')
 if (root) {
   createRoot(root).render(
     <StrictMode>
       <HashRouter>
-        <App />
+        <ToastProvider>
+          <AppStoreProvider>
+            <App />
+          </AppStoreProvider>
+        </ToastProvider>
       </HashRouter>
     </StrictMode>,
   )

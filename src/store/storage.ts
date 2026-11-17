@@ -1,33 +1,57 @@
-const PREFIX = 'ckvc:'
+import type { AppState } from '../lib/types'
+import { emptyState } from '../lib/rules'
 
-/** Đọc JSON từ localStorage, trả về `fallback` nếu không có hoặc lỗi. */
-export function load<T>(key: string, fallback: T): T {
+export const STATE_KEY = 'tem:v1'
+const ROLE_KEY = 'tem:role'
+
+export type Role = 'tv' | 'quay'
+
+function isAppState(x: unknown): x is AppState {
+  if (!x || typeof x !== 'object') return false
+  const s = x as Record<string, unknown>
+  return (
+    s.version === 1 &&
+    Array.isArray(s.members) &&
+    Array.isArray(s.txns) &&
+    Array.isArray(s.vouchers) &&
+    Array.isArray(s.rewards) &&
+    !!s.usedTxnCodes &&
+    typeof s.usedTxnCodes === 'object'
+  )
+}
+
+/** Đọc state. Chưa có → state rỗng. Hỏng → state rỗng + corrupted = true (để báo toast). */
+export function loadAppState(): { state: AppState; corrupted: boolean } {
   try {
-    const raw = localStorage.getItem(PREFIX + key)
-    if (raw == null) return fallback
-    return JSON.parse(raw) as T
+    const raw = localStorage.getItem(STATE_KEY)
+    if (raw == null) return { state: emptyState(), corrupted: false }
+    const parsed: unknown = JSON.parse(raw)
+    if (!isAppState(parsed)) return { state: emptyState(), corrupted: true }
+    return { state: { ...parsed, rewards: parsed.rewards.length ? parsed.rewards : emptyState().rewards }, corrupted: false }
   } catch {
-    return fallback
+    return { state: emptyState(), corrupted: true }
   }
 }
 
-export function save<T>(key: string, value: T): void {
+export function saveAppState(state: AppState): void {
   try {
-    localStorage.setItem(PREFIX + key, JSON.stringify(value))
+    localStorage.setItem(STATE_KEY, JSON.stringify(state))
   } catch {
     /* bộ nhớ đầy hoặc bị chặn — bỏ qua */
   }
 }
 
-/** Xoá toàn bộ dữ liệu của app để quay về dữ liệu mẫu. */
-export function resetAll(): void {
+export function loadRole(): Role {
   try {
-    const keys: string[] = []
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i)
-      if (k && k.startsWith(PREFIX)) keys.push(k)
-    }
-    keys.forEach((k) => localStorage.removeItem(k))
+    return localStorage.getItem(ROLE_KEY) === 'quay' ? 'quay' : 'tv'
+  } catch {
+    return 'tv'
+  }
+}
+
+export function saveRole(role: Role): void {
+  try {
+    localStorage.setItem(ROLE_KEY, role)
   } catch {
     /* bỏ qua */
   }
@@ -35,7 +59,7 @@ export function resetAll(): void {
 
 export function sessionFlag(key: string): boolean {
   try {
-    return sessionStorage.getItem(PREFIX + key) === '1'
+    return sessionStorage.getItem(`tem:${key}`) === '1'
   } catch {
     return false
   }
@@ -43,7 +67,7 @@ export function sessionFlag(key: string): boolean {
 
 export function setSessionFlag(key: string): void {
   try {
-    sessionStorage.setItem(PREFIX + key, '1')
+    sessionStorage.setItem(`tem:${key}`, '1')
   } catch {
     /* bỏ qua */
   }

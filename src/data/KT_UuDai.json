@@ -1,0 +1,23 @@
+[
+  {
+    "MaUuDai": "KT-VCH-01",
+    "TenUuDai": "Voucher 20.000đ",
+    "MoTa": "Giảm giá đơn hàng",
+    "DiemCanDoi": "500",
+    "TrangThai": "Đang áp dụng"
+  },
+  {
+    "MaUuDai": "KT-VCH-02",
+    "TenUuDai": "Voucher 50.000đ",
+    "MoTa": "Giảm giá đơn hàng",
+    "DiemCanDoi": "1100",
+    "TrangThai": "Đang áp dụng"
+  },
+  {
+    "MaUuDai": "KT-VCH-03",
+    "TenUuDai": "Quà tặng đặc biệt",
+    "MoTa": "Quà tặng mô phỏng",
+    "DiemCanDoi": "2000",
+    "TrangThai": "Đang áp dụng"
+  }
+]

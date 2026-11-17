@@ -1,0 +1,47 @@
+[
+  {
+    "MaCa": "TC-KT-01",
+    "TinhHuong": "Cộng điểm mới",
+    "MaThanhVien": "KT-008",
+    "MaGiaoDich_HoacUuDai": "TX-NEW-001",
+    "GiaTriGiaoDich_VND": "1000000",
+    "DuLieuDauVao": "10.000đ = 1 điểm",
+    "KetQuaMongDoi": "Cộng 100 điểm một lần, số dư từ 0 lên 100"
+  },
+  {
+    "MaCa": "TC-KT-02",
+    "TinhHuong": "Nhập lại giao dịch",
+    "MaThanhVien": "KT-002",
+    "MaGiaoDich_HoacUuDai": "TX-KT-002",
+    "GiaTriGiaoDich_VND": "1500000",
+    "DuLieuDauVao": "Mã này đã có trong sổ",
+    "KetQuaMongDoi": "Báo trùng, không cộng thêm 150 điểm"
+  },
+  {
+    "MaCa": "TC-KT-03",
+    "TinhHuong": "Đổi ưu đãi đủ điểm",
+    "MaThanhVien": "KT-005",
+    "MaGiaoDich_HoacUuDai": "KT-VCH-01",
+    "GiaTriGiaoDich_VND": "",
+    "DuLieuDauVao": "Đổi 500 điểm",
+    "KetQuaMongDoi": "Tạo voucher trong ví và số dư từ 5800 còn 5300"
+  },
+  {
+    "MaCa": "TC-KT-04",
+    "TinhHuong": "Đổi ưu đãi thiếu điểm",
+    "MaThanhVien": "KT-008",
+    "MaGiaoDich_HoacUuDai": "KT-VCH-01",
+    "GiaTriGiaoDich_VND": "",
+    "DuLieuDauVao": "Đổi 500 điểm",
+    "KetQuaMongDoi": "Từ chối đổi; số dư vẫn là 0"
+  },
+  {
+    "MaCa": "TC-KT-05",
+    "TinhHuong": "Quét QR chuẩn của BTC",
+    "MaThanhVien": "KT-004",
+    "MaGiaoDich_HoacUuDai": "KT-004",
+    "GiaTriGiaoDich_VND": "",
+    "DuLieuDauVao": "Payload QR: KT-004",
+    "KetQuaMongDoi": "Đọc đúng KT-004 và mở hồ sơ Dũng Phạm. Phần quét là điểm thưởng; không bắt buộc."
+  }
+]

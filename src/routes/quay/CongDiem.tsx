@@ -1,0 +1,312 @@
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { AnimatePresence, motion } from 'motion/react'
+import { ArrowRight, CircleAlert, Sparkles } from 'lucide-react'
+import { PageHeader } from '../../components/ui/PageHeader'
+import { Field, inputClass } from '../../components/ui/Field'
+import { Button } from '../../components/ui/Button'
+import { useToast } from '../../components/ui/Toast'
+import { TierChip } from '../../components/TierChip'
+import { SampleLoadBlock } from '../../components/SampleLoadBlock'
+import { useStore } from '../../store/AppStore'
+import {
+  VND_PER_POINT,
+  duplicateTxnMessage,
+  earnPoints,
+  findMember,
+  generateTxnCode,
+  getTier,
+  normalizeMemberId,
+  normalizeTxnCode,
+  pointsForAmount,
+  tierRank,
+  txnCodeUsage,
+  validateAmount,
+  MAX_AMOUNT,
+} from '../../lib/rules'
+import { formatNumber, formatVnd, maskPhone, parseDigits } from '../../lib/format'
+import { feedbackError, feedbackSuccess } from '../../lib/feedback'
+import { SAMPLE_TEST_ID } from '../../lib/seed'
+import { EASE } from '../../lib/motion'
+
+function formatAmountInput(raw: string): string {
+  const digits = raw.replace(/\D/g, '').replace(/^0+/, '').slice(0, 10)
+  return digits ? formatNumber(Number(digits)) : ''
+}
+
+export default function CongDiem() {
+  const { hasData } = useStore()
+  if (!hasData)
+    return (
+      <>
+        <PageHeader title="Cộng điểm" subtitle="Nhập mã thành viên và số tiền hoá đơn" />
+        <SampleLoadBlock />
+      </>
+    )
+  return <EarnForm />
+}
+
+function EarnForm() {
+  const { state, run } = useStore()
+  const toast = useToast()
+  const [params] = useSearchParams()
+
+  const [memberInput, setMemberInput] = useState(params.get('ma') ?? '')
+  const [memberTouched, setMemberTouched] = useState(!!params.get('ma'))
+  const [amountText, setAmountText] = useState(formatAmountInput(params.get('tien') ?? ''))
+  const [amountTouched, setAmountTouched] = useState(!!params.get('tien'))
+  const [code, setCode] = useState(params.get('gd') ?? '')
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [shake, setShake] = useState(0)
+
+  const memberRef = useRef<HTMLInputElement>(null)
+  const amountRef = useRef<HTMLInputElement>(null)
+  const codeRef = useRef<HTMLInputElement>(null)
+
+  // Focus ô đầu tiên còn trống (tương thích máy quét: ô mã TV focus sẵn).
+  useEffect(() => {
+    if (!params.get('ma')) memberRef.current?.focus()
+    else if (!params.get('tien')) amountRef.current?.focus()
+  }, [params])
+
+  const member = memberInput.trim() ? findMember(state, memberInput) : undefined
+  const showNotFound = !!memberInput.trim() && !member && (memberTouched || normalizeMemberId(memberInput).length >= 6)
+
+  const amount = parseDigits(amountText)
+  const amountError = validateAmount(amount)
+  const showAmountError = !!amountText && !!amountError && (amountTouched || (amount ?? 0) > MAX_AMOUNT)
+
+  const used = txnCodeUsage(state, code)
+  const dupError = used ? duplicateTxnMessage(code, used) : null
+
+  const points = !amountError && amount != null ? pointsForAmount(amount) : 0
+  const oldTier = member ? getTier(member.points) : null
+  const newTier = member ? getTier(member.points + points) : null
+  const tierUp = !!oldTier && !!newTier && tierRank(newTier) > tierRank(oldTier)
+
+  const canSubmit = !!member && !amountError && normalizeTxnCode(code).length > 0
+
+  function submit() {
+    if (!canSubmit || amount == null) return
+    const r = run((s) => earnPoints(s, { memberId: memberInput, amount, txnCode: code }))
+    if (!r.ok) {
+      setSubmitError(r.error)
+      setShake((n) => n + 1)
+      feedbackError()
+      if (txnCodeUsage(state, code)) codeRef.current?.focus()
+      return
+    }
+    feedbackSuccess()
+    setSubmitError(null)
+    toast.show(`Đã cộng +${formatNumber(r.pointsAdded)} điểm cho ${r.member.name} (${r.member.id})`)
+    if (tierRank(r.newTier) > tierRank(r.oldTier))
+      window.setTimeout(() => toast.show(`${r.member.name} lên hạng ${r.newTier.name}`, 'tierup', r.newTier.color), 250)
+    setAmountText('')
+    setAmountTouched(false)
+    setCode('')
+    amountRef.current?.focus()
+  }
+
+  function onMemberKey(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    setMemberTouched(true)
+    if (findMember(state, memberInput)) amountRef.current?.focus()
+  }
+
+  function onAmountKey(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    setAmountTouched(true)
+    codeRef.current?.focus()
+  }
+
+  function onCodeKey(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    submit()
+  }
+
+  const generalError = submitError && !dupError ? submitError : null
+
+  return (
+    <>
+      <PageHeader title="Cộng điểm" subtitle={`Tỉ lệ ${formatVnd(VND_PER_POINT)} = 1 điểm`} />
+      <form
+        noValidate
+        className="flex flex-col gap-5 px-4"
+        onSubmit={(e) => {
+          e.preventDefault()
+          submit()
+        }}
+      >
+        <div>
+          <Field
+            id="ma-tv"
+            label="Mã thành viên"
+            error={showNotFound ? 'Không tìm thấy thành viên' : undefined}
+            hint={
+              <span className="flex items-center gap-2">
+                Mã thử:
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMemberInput(SAMPLE_TEST_ID)
+                    setMemberTouched(true)
+                    amountRef.current?.focus()
+                  }}
+                  className="num inline-flex min-h-11 items-center rounded-[10px] border border-line bg-surface px-3 text-sm font-semibold text-ink"
+                >
+                  {SAMPLE_TEST_ID}
+                </button>
+              </span>
+            }
+          >
+            {/* pr-14: chừa chỗ nút quét QR bằng camera (phase 3) */}
+            <input
+              ref={memberRef}
+              id="ma-tv"
+              className={`${inputClass} num pr-14 uppercase`}
+              value={memberInput}
+              onChange={(e) => {
+                setMemberInput(e.target.value)
+                setSubmitError(null)
+              }}
+              onBlur={() => setMemberTouched(true)}
+              onKeyDown={onMemberKey}
+              placeholder="VD: KT-004"
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              enterKeyHint="next"
+              aria-invalid={showNotFound}
+            />
+          </Field>
+
+          <AnimatePresence initial={false}>
+            {member && oldTier && (
+              <motion.div
+                key={member.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18, ease: EASE }}
+                className="mt-3 flex items-center gap-3 rounded-[14px] border border-line bg-surface p-3"
+                style={{ borderLeft: `4px solid ${oldTier.color}` }}
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-semibold">{member.name}</p>
+                  <p className="num text-sm text-muted">
+                    {member.id} · {maskPhone(member.phone)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <TierChip tier={oldTier} />
+                  <p className="num mt-1 text-lg leading-tight font-bold">
+                    {formatNumber(member.points)} <span className="text-sm font-medium text-muted">điểm</span>
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <Field id="so-tien" label="Số tiền (đ)" error={showAmountError ? amountError : undefined}>
+          <input
+            ref={amountRef}
+            id="so-tien"
+            className={`${inputClass} num`}
+            value={amountText}
+            onChange={(e) => {
+              setAmountText(formatAmountInput(e.target.value))
+              setSubmitError(null)
+            }}
+            onBlur={() => setAmountTouched(true)}
+            onKeyDown={onAmountKey}
+            inputMode="numeric"
+            placeholder="VD: 1.000.000"
+            autoComplete="off"
+            enterKeyHint="next"
+            aria-invalid={showAmountError}
+          />
+        </Field>
+
+        <div>
+          <label htmlFor="ma-gd" className="mb-1.5 block text-sm font-semibold">
+            Mã giao dịch
+          </label>
+          <div className="flex gap-2">
+            <input
+              ref={codeRef}
+              id="ma-gd"
+              className={`${inputClass} num min-w-0 flex-1 uppercase`}
+              value={code}
+              onChange={(e) => {
+                setCode(e.target.value)
+                setSubmitError(null)
+              }}
+              onKeyDown={onCodeKey}
+              placeholder="VD: TX-NEW-001"
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              enterKeyHint="done"
+              aria-invalid={!!dupError}
+              aria-describedby={dupError ? 'ma-gd-error' : undefined}
+            />
+            <Button variant="secondary" className="h-12 shrink-0 px-3 text-sm" onClick={() => setCode(generateTxnCode(state))}>
+              Tự sinh
+            </Button>
+          </div>
+          {dupError && (
+            <motion.div
+              key={shake}
+              id="ma-gd-error"
+              role="alert"
+              initial={shake ? { x: -6 } : false}
+              animate={{ x: 0 }}
+              transition={{ type: 'spring', stiffness: 900, damping: 18 }}
+              className="mt-2 flex items-start gap-2 rounded-[10px] border border-danger/30 bg-danger/5 p-3 text-sm text-danger"
+            >
+              <CircleAlert size={20} strokeWidth={1.75} className="shrink-0" aria-hidden />
+              <span>{dupError}</span>
+            </motion.div>
+          )}
+        </div>
+
+        {member && oldTier && newTier && points > 0 && (
+          <div className="rounded-[14px] bg-accent-soft p-4">
+            <p className="text-sm text-muted">Xem trước</p>
+            <p className="num mt-0.5 text-lg font-bold text-accent">
+              Sẽ cộng +{formatNumber(points)} điểm
+              <span className="font-medium text-muted">
+                {' '}
+                · {formatVnd(amount ?? 0)} ÷ {formatVnd(VND_PER_POINT)}
+              </span>
+            </p>
+            <p className="num mt-1 flex flex-wrap items-center gap-1.5 text-sm">
+              Số dư {formatNumber(member.points)} <ArrowRight size={14} strokeWidth={1.75} aria-hidden />{' '}
+              <span className="font-semibold">{formatNumber(member.points + points)}</span>
+              {tierUp && (
+                <span className="ml-1 inline-flex items-center gap-1 font-semibold">
+                  <Sparkles size={14} strokeWidth={1.75} aria-hidden /> lên hạng <TierChip tier={newTier} />
+                </span>
+              )}
+            </p>
+          </div>
+        )}
+
+        {generalError && (
+          <p role="alert" className="flex items-start gap-2 rounded-[10px] border border-danger/30 bg-danger/5 p-3 text-sm text-danger">
+            <CircleAlert size={20} strokeWidth={1.75} className="shrink-0" aria-hidden />
+            {generalError}
+          </p>
+        )}
+
+        <Button type="submit" full disabled={!canSubmit} className="min-h-[52px] text-[17px]">
+          Cộng điểm
+        </Button>
+      </form>
+    </>
+  )
+}
