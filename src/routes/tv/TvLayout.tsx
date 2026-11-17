@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import type { Member } from '../../lib/types'
-import { findMember } from '../../lib/rules'
+import { TIERS, findMember, getTier, tierRank } from '../../lib/rules'
 import { useStore } from '../../store/AppStore'
-import { saveRole } from '../../store/storage'
+import { loadSeenTier, saveRole, saveSeenTier } from '../../store/storage'
+import { useCelebrate } from '../../components/TierCelebration'
 import { useToast } from '../../components/ui/Toast'
 import VaoThe from './VaoThe'
 
@@ -23,6 +24,7 @@ export default function TvLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const toast = useToast()
+  const celebrate = useCelebrate()
 
   const ma = params.get('ma')
   const paramMember = ma ? findMember(state, ma) : undefined
@@ -45,6 +47,18 @@ export default function TvLayout() {
 
   const member = paramMember ?? currentMember
   const isRulesPage = location.pathname === '/tv/the-le'
+
+  // Lên hạng: chúc mừng khi vai Thành viên thấy hạng mới lần đầu (lưu cờ đã xem theo mã).
+  const tierId = member ? getTier(member.points).id : null
+  useEffect(() => {
+    if (!member || !tierId) return
+    const seen = loadSeenTier(member.id)
+    const now = getTier(member.points)
+    const seenTier = TIERS.find((t) => t.id === seen)
+    if (seenTier && tierRank(now) > tierRank(seenTier)) celebrate({ name: member.name, memberId: member.id, from: seenTier, to: now })
+    if (seen !== now.id) saveSeenTier(member.id, now.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [member?.id, tierId])
 
   return (
     <>

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
+import { CountUp } from '../../components/CountUp'
+import { useCelebrate } from '../../components/TierCelebration'
 import { ArrowRight, CircleAlert, ScanLine, Sparkles } from 'lucide-react'
 import { ScanSheet } from '../../components/ScanSheet'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -60,6 +62,9 @@ function EarnForm() {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [shake, setShake] = useState(0)
   const [scanOpen, setScanOpen] = useState(false)
+  const [gain, setGain] = useState({ key: 0, points: 0 })
+  const celebrate = useCelebrate()
+  const reduce = useReducedMotion()
 
   const memberRef = useRef<HTMLInputElement>(null)
   const amountRef = useRef<HTMLInputElement>(null)
@@ -101,8 +106,9 @@ function EarnForm() {
     feedbackSuccess()
     setSubmitError(null)
     toast.show(`Đã cộng +${formatNumber(r.pointsAdded)} điểm cho ${r.member.name} (${r.member.id})`)
+    setGain((g) => ({ key: g.key + 1, points: r.pointsAdded }))
     if (tierRank(r.newTier) > tierRank(r.oldTier))
-      window.setTimeout(() => toast.show(`${r.member.name} lên hạng ${r.newTier.name}`, 'tierup', r.newTier.color), 250)
+      window.setTimeout(() => celebrate({ name: r.member.name, memberId: r.member.id, from: r.oldTier, to: r.newTier }), 450)
     setAmountText('')
     setAmountTouched(false)
     setCode('')
@@ -215,16 +221,14 @@ function EarnForm() {
             }}
           />
 
-          <AnimatePresence initial={false}>
-            {member && oldTier && (
+          {member && oldTier && (
               <motion.div
                 key={member.id}
-                initial={{ opacity: 0, y: 6 }}
+                initial={reduce ? false : { opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
                 transition={{ duration: 0.18, ease: EASE }}
-                className="mt-3 flex items-center gap-3 rounded-[14px] border border-line bg-surface p-3"
-                style={{ borderLeft: `4px solid ${oldTier.color}` }}
+                className="relative mt-3 flex items-center gap-3 rounded-[14px] border border-line bg-surface p-3"
+                style={{ borderLeft: `4px solid ${oldTier.color}`, transition: 'border-color 600ms' }}
               >
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold">{member.name}</p>
@@ -232,15 +236,26 @@ function EarnForm() {
                     {member.id} · {maskPhone(member.phone)}
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="relative text-right">
                   <TierChip tier={oldTier} />
                   <p className="num mt-1 text-lg leading-tight font-bold">
-                    {formatNumber(member.points)} <span className="text-sm font-medium text-muted">điểm</span>
+                    <CountUp value={member.points} /> <span className="text-sm font-medium text-muted">điểm</span>
                   </p>
+                  {gain.key > 0 && !reduce && (
+                    <motion.span
+                      key={gain.key}
+                      aria-hidden
+                      className="num pointer-events-none absolute right-0 -top-2 text-xl font-bold text-accent"
+                      initial={{ y: 0, opacity: 0 }}
+                      animate={{ y: -30, opacity: [0, 1, 1, 0] }}
+                      transition={{ duration: 0.9, ease: EASE, times: [0, 0.15, 0.6, 1] }}
+                    >
+                      +{formatNumber(gain.points)}
+                    </motion.span>
+                  )}
                 </div>
               </motion.div>
             )}
-          </AnimatePresence>
         </div>
 
         <Field id="so-tien" label="Số tiền (đ)" error={showAmountError ? amountError : undefined}>

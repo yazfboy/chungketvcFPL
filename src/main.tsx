@@ -9,6 +9,7 @@ import './index.css'
 import App from './App.tsx'
 import { ToastProvider } from './components/ui/Toast'
 import { AppStoreProvider } from './store/AppStore'
+import { CelebrationProvider } from './components/TierCelebration'
 
 const root = document.getElementById('root')
 if (root) {
@@ -16,9 +17,11 @@ if (root) {
     <StrictMode>
       <HashRouter>
         <ToastProvider>
-          <AppStoreProvider>
-            <App />
-          </AppStoreProvider>
+          <CelebrationProvider>
+            <AppStoreProvider>
+              <App />
+            </AppStoreProvider>
+          </CelebrationProvider>
         </ToastProvider>
       </HashRouter>
     </StrictMode>,

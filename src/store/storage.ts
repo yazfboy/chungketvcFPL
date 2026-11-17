@@ -77,6 +77,23 @@ export function saveCurrentMemberId(id: string | null): void {
   }
 }
 
+/** Hạng mà vai Thành viên đã "thấy" cho từng mã — để chỉ chúc mừng lên hạng lần đầu. */
+export function loadSeenTier(memberId: string): string | null {
+  try {
+    return localStorage.getItem(`tem:seenTier:${memberId}`)
+  } catch {
+    return null
+  }
+}
+
+export function saveSeenTier(memberId: string, tierId: string): void {
+  try {
+    localStorage.setItem(`tem:seenTier:${memberId}`, tierId)
+  } catch {
+    /* bỏ qua */
+  }
+}
+
 export function sessionFlag(key: string): boolean {
   try {
     return sessionStorage.getItem(`tem:${key}`) === '1'
