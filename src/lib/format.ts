@@ -19,6 +19,37 @@ export function formatDateTime(iso: string): string {
   return `${hour}:${p.minute} ${p.day}/${p.month}/${p.year}`
 }
 
+/** "HH:mm" (giờ Việt Nam) — phần giờ của formatDateTime. */
+export function formatTime(iso: string): string {
+  const full = formatDateTime(iso)
+  return full === '—' ? full : full.slice(0, 5)
+}
+
+/** Khoá ngày "yyyy-MM-dd" theo giờ Việt Nam, để nhóm lịch sử. */
+export function vnDayKey(iso: string | Date): string {
+  const full = formatDateTime(typeof iso === 'string' ? iso : iso.toISOString())
+  if (full === '—') return ''
+  const [d, m, y] = full.slice(6).split('/')
+  return `${y}-${m}-${d}`
+}
+
+/** Nhãn nhóm ngày: "Hôm nay" / "Hôm qua" / "dd/MM/yyyy". */
+export function formatDayLabel(dayKey: string, now: Date = new Date()): string {
+  if (!dayKey) return '—'
+  const today = vnDayKey(now)
+  const yesterday = vnDayKey(new Date(now.getTime() - 86_400_000))
+  if (dayKey === today) return 'Hôm nay'
+  if (dayKey === yesterday) return 'Hôm qua'
+  const [y, m, d] = dayKey.split('-')
+  return `${d}/${m}/${y}`
+}
+
+/** "dd/MM/yyyy" (giờ Việt Nam). */
+export function formatDate(iso: string): string {
+  const full = formatDateTime(iso)
+  return full === '—' ? full : full.slice(6)
+}
+
 /** 1000000 → "1.000.000" (dấu chấm phân tách nghìn). */
 export function formatNumber(n: number): string {
   if (!Number.isFinite(n)) return '0'

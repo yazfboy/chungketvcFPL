@@ -3,8 +3,12 @@ import {
   earnPoints,
   emptyState,
   findMember,
+  findMemberByIdOrPhone,
   getTier,
+  nearestReward,
   nextTier,
+  rewardEligibility,
+  tierProgress,
   normalizeTxnCode,
   previewRedeem,
   redeem,
@@ -12,7 +16,7 @@ import {
   useVoucher,
 } from './rules'
 import { SAMPLE_REFERENCE_TIERS, TEST_CASES, buildSampleState } from './seed'
-import { formatDateTime } from './format'
+import { formatDateTime, formatDayLabel, vnDayKey } from './format'
 
 const NOW = new Date('2026-11-17T08:00:00+07:00')
 const ctx = { now: NOW, random: () => 0.42 }
@@ -157,6 +161,33 @@ describe('Quy tắc', () => {
     expect(u.ok && u.voucher.status).toBe('da_dung')
     if (!u.ok) return
     expect(useVoucher(u.state, r.voucher.code, ctx).ok).toBe(false)
+  })
+
+  it('ưu đãi gần nhất, lý do không đổi được, tiến độ hạng', () => {
+    const s = buildSampleState()
+    const near = nearestReward(s.rewards, 250)
+    expect(near && !near.affordable && [near.reward.id, near.missing]).toEqual(['KT-VCH-01', 250])
+    const near2 = nearestReward(s.rewards, 3200)
+    expect(near2?.affordable && near2.reward.id).toBe('KT-VCH-03')
+    const gold = s.rewards.find((r) => r.id === 'KT-VCH-VANG')!
+    expect(rewardEligibility(3200, gold)).toEqual({ ok: false, reason: 'Dành cho hạng Vàng' })
+    expect(rewardEligibility(0, s.rewards[0])).toEqual({ ok: false, reason: 'Thiếu 500 điểm' })
+    expect(tierProgress(3200)).toBeCloseTo(0.55)
+    expect(tierProgress(12500)).toBeNull()
+  })
+
+  it('mở thẻ bằng mã hoặc SĐT', () => {
+    const s = buildSampleState()
+    expect(findMemberByIdOrPhone(s, 'kt-004')?.id).toBe('KT-004')
+    expect(findMemberByIdOrPhone(s, '0900 001.004')?.id).toBe('KT-004')
+    expect(findMemberByIdOrPhone(s, '123')).toBeUndefined()
+  })
+
+  it('nhóm ngày theo giờ Việt Nam', () => {
+    const now = new Date('2026-11-17T08:00:00+07:00')
+    expect(formatDayLabel(vnDayKey('2026-11-16T23:30:00+07:00'), now)).toBe('Hôm qua')
+    expect(formatDayLabel(vnDayKey('2026-11-16T17:30:00Z'), now)).toBe('Hôm nay')
+    expect(formatDayLabel(vnDayKey('2026-10-04T11:40:00+07:00'), now)).toBe('04/10/2026')
   })
 
   it('đăng ký: mã mới KT-009, chặn SĐT trùng, SĐT sai', () => {

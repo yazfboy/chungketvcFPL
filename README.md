@@ -5,8 +5,12 @@ Thẻ thành viên tích điểm cho cửa hàng: khách xem thẻ/hạng/ưu đ
 - **Demo:** https://yazfboy.github.io/chungketvcFPL/
 - **Mã thử thống nhất:** `KT-004` (Dũng Phạm, hạng Bạc). Lần đầu mở: bấm **Nạp dữ liệu mẫu**.
 
-## Tính năng (đến Phase 1)
+## Tính năng (đến Phase 2)
 - **2 vai trong 1 app**: chuyển “Thành viên | Quầy” ở góc phải header; tab bar đổi theo vai.
+- **Thành viên · Vào thẻ**: mở bằng SĐT hoặc mã; đăng ký (họ tên + SĐT, chặn trùng SĐT) → nhận mã KT-xxx ngay; danh sách “Dùng thử nhanh” (KT-004 đầu tiên).
+- **Thành viên · Thẻ**: thẻ tỉ lệ thẻ ngân hàng, đổi màu theo hạng (Đồng/Bạc/Vàng), mã QR (payload = mã thành viên, tải được ảnh PNG), tiến độ lên hạng, ưu đãi gần nhất, 3 biến động gần nhất.
+- **Thành viên · Ưu đãi**: đổi điểm (xem trước số dư, cảnh báo nếu tụt hạng), ví voucher TEM-XXXX-XXXX (sao chép mã, trạng thái đã dùng).
+- **Thành viên · Lịch sử** (lọc Tất cả/Cộng/Đổi, nhóm theo ngày) và **Thể lệ** (đọc trực tiếp từ `rules.ts`).
 - **Quầy · Cộng điểm**: nhập/quét mã thành viên (tương thích máy quét USB — Enter để nhảy ô), số tiền tự định dạng, mã giao dịch (có nút Tự sinh), xem trước số điểm và lên hạng. Tiếng bíp + rung khi thành công (tắt được trong trang Dữ liệu).
 - **Chống cộng trùng mã giao dịch** toàn hệ thống (kể cả mã mẫu TX-KT-*), không phân biệt hoa/thường/khoảng trắng.
 - **Quầy · Thành viên**: tìm theo tên (không dấu), SĐT, mã; chi tiết có thẻ màu theo hạng + lịch sử biến động điểm.
@@ -48,7 +52,7 @@ scripts/xlsx-to-json.mjs  # Excel → JSON
 src/
   App.tsx, main.tsx       # HashRouter, header chuyển vai, tab bar
   routes/quay/            # Cộng điểm, Thành viên, Chi tiết, Dữ liệu
-  routes/tv/              # Thẻ, Ưu đãi, Lịch sử, Thể lệ (phase 2)
+  routes/tv/              # TvLayout (chọn thẻ), Vào thẻ, Thẻ, Ưu đãi, Lịch sử, Thể lệ
   components/             # TierChip, MemberMiniCard, TxnList, SampleLoadBlock...
   components/ui/          # Button, Field, Toast, Empty, PageHeader...
   lib/                    # rules.ts (quy tắc), seed.ts, format.ts, feedback.ts, search.ts — hàm thuần

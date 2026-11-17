@@ -57,6 +57,26 @@ export function saveRole(role: Role): void {
   }
 }
 
+const ME_KEY = 'tem:me'
+
+export function loadCurrentMemberId(): string | null {
+  try {
+    const v = localStorage.getItem(ME_KEY)
+    return v && /^[A-Z0-9-]{1,20}$/.test(v) ? v : null
+  } catch {
+    return null
+  }
+}
+
+export function saveCurrentMemberId(id: string | null): void {
+  try {
+    if (id) localStorage.setItem(ME_KEY, id)
+    else localStorage.removeItem(ME_KEY)
+  } catch {
+    /* bỏ qua */
+  }
+}
+
 export function sessionFlag(key: string): boolean {
   try {
     return sessionStorage.getItem(`tem:${key}`) === '1'

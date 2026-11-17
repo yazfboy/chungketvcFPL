@@ -13,7 +13,11 @@ import ThanhVien from './routes/quay/ThanhVien'
 import ThanhVienChiTiet from './routes/quay/ThanhVienChiTiet'
 import DuLieu from './routes/quay/DuLieu'
 import { QuayThongKe, QuayVoucher } from './routes/quay/Placeholders'
-import { TvLichSu, TvThe, TvTheLe, TvUuDai } from './routes/tv'
+import TvLayout from './routes/tv/TvLayout'
+import TvThe from './routes/tv/The'
+import TvUuDai from './routes/tv/UuDai'
+import TvLichSu from './routes/tv/LichSu'
+import TvTheLe from './routes/tv/TheLe'
 
 const TABS: Record<Role, TabItem[]> = {
   tv: [
@@ -62,18 +66,21 @@ export default function App() {
         <main style={{ paddingBottom: 'calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 24px)' }}>
           {/* Chỉ animation vào (không chờ animation thoát) → đổi route không bao giờ bị kẹt. */}
           <motion.div
-            key={location.pathname + location.search}
+            key={location.pathname}
             initial={reduce ? false : pageTransition.initial}
             animate={pageTransition.animate}
             transition={pageTransition.transition}
           >
               <Routes location={location}>
                 <Route path="/" element={<Navigate to={HOME[loadRole()]} replace />} />
-                <Route path="/tv/the" element={<TvThe />} />
-                <Route path="/tv/uu-dai" element={<TvUuDai />} />
-                <Route path="/tv/lich-su" element={<TvLichSu />} />
-                <Route path="/tv/the-le" element={<TvTheLe />} />
-                <Route path="/quay/cong-diem" element={<CongDiem />} />
+                <Route path="/tv" element={<TvLayout />}>
+                  <Route index element={<Navigate to="/tv/the" replace />} />
+                  <Route path="the" element={<TvThe />} />
+                  <Route path="uu-dai" element={<TvUuDai />} />
+                  <Route path="lich-su" element={<TvLichSu />} />
+                  <Route path="the-le" element={<TvTheLe />} />
+                </Route>
+                <Route path="/quay/cong-diem" element={<CongDiem key={location.search} />} />
                 <Route path="/quay/voucher" element={<QuayVoucher />} />
                 <Route path="/quay/thanh-vien" element={<ThanhVien />} />
                 <Route path="/quay/thanh-vien/:id" element={<ThanhVienChiTiet />} />

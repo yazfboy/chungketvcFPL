@@ -1,8 +1,18 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, type ReactNode } from 'react'
-import type { AppState, Result } from '../lib/types'
-import { emptyState } from '../lib/rules'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
+import type { AppState, Member, Result } from '../lib/types'
+import { emptyState, findMember } from '../lib/rules'
 import { buildSampleState } from '../lib/seed'
-import { loadAppState, saveAppState } from './storage'
+import { loadAppState, loadCurrentMemberId, saveAppState, saveCurrentMemberId } from './storage'
 import { useToast } from '../components/ui/Toast'
 
 type Action = { type: 'set'; state: AppState }
@@ -18,6 +28,9 @@ interface Store {
   run: <T extends object>(op: (s: AppState) => Result<T>) => Result<T>
   loadSample: () => AppState
   clearAll: () => void
+  /** Thành viên đang xem ở vai Thành viên — undefined nếu chưa chọn hoặc mã không còn tồn tại. */
+  currentMember: Member | undefined
+  setCurrentMemberId: (id: string | null) => void
 }
 
 const StoreContext = createContext<Store | null>(null)
@@ -27,6 +40,7 @@ let corruptionReported = false
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initial.state)
+  const [currentId, setCurrentId] = useState<string | null>(loadCurrentMemberId)
   const ref = useRef(state)
   const toast = useToast()
 
@@ -60,9 +74,29 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const clearAll = useCallback(() => commit(emptyState()), [commit])
 
+  const setCurrentMemberId = useCallback((id: string | null) => {
+    setCurrentId(id)
+    saveCurrentMemberId(id)
+  }, [])
+
+  const currentMember = currentId ? findMember(state, currentId) : undefined
+
+  // Mã đang xem không còn trong dữ liệu (nạp lại mẫu / xóa dữ liệu) → tự xóa, về màn chọn thẻ.
+  useEffect(() => {
+    if (currentId && !currentMember) setCurrentMemberId(null)
+  }, [currentId, currentMember, setCurrentMemberId])
+
   const value = useMemo<Store>(
-    () => ({ state, hasData: state.members.length > 0, run, loadSample, clearAll }),
-    [state, run, loadSample, clearAll],
+    () => ({
+      state,
+      hasData: state.members.length > 0,
+      run,
+      loadSample,
+      clearAll,
+      currentMember,
+      setCurrentMemberId,
+    }),
+    [state, run, loadSample, clearAll, currentMember, setCurrentMemberId],
   )
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
 }

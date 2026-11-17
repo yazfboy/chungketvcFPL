@@ -68,6 +68,41 @@ export const REWARDS: readonly Reward[] = [
   },
 ]
 
+/** Ngày công bố thể lệ (hiển thị ở trang Thể lệ). */
+export const RULES_EFFECTIVE_FROM = '2026-11-17T00:00:00+07:00'
+
+/** Thành viên có đổi được ưu đãi không, và lý do ngắn nếu không. */
+export function rewardEligibility(points: number, reward: Reward): { ok: true } | { ok: false; reason: string } {
+  if (!reward.active) return { ok: false, reason: 'Ngừng áp dụng' }
+  if (reward.goldOnly && getTier(points).id !== 'vang') return { ok: false, reason: 'Dành cho hạng Vàng' }
+  if (points < reward.cost) return { ok: false, reason: `Thiếu ${formatNumber(reward.cost - points)} điểm` }
+  return { ok: true }
+}
+
+/**
+ * Ưu đãi gần nhất cho khối gợi ý ở tab Thẻ:
+ * - đủ điểm: ưu đãi giá trị cao nhất đang đổi được;
+ * - chưa đủ: ưu đãi rẻ nhất chưa đổi được (kèm số điểm còn thiếu).
+ */
+export function nearestReward(
+  rewards: readonly Reward[],
+  points: number,
+): { reward: Reward; affordable: true } | { reward: Reward; affordable: false; missing: number } | null {
+  const usable = rewards.filter((r) => r.active && (!r.goldOnly || getTier(points).id === 'vang')).sort((a, b) => a.cost - b.cost)
+  const affordable = usable.filter((r) => r.cost <= points)
+  if (affordable.length) return { reward: affordable[affordable.length - 1], affordable: true }
+  const next = usable[0]
+  return next ? { reward: next, affordable: false, missing: next.cost - points } : null
+}
+
+/** Tiến độ trong khoảng của hạng hiện tại (0–1); null khi đã hạng cao nhất. */
+export function tierProgress(points: number): number | null {
+  const next = nextTier(points)
+  if (!next) return null
+  const cur = getTier(points)
+  return Math.min(1, Math.max(0, (points - cur.min) / (next.tier.min - cur.min)))
+}
+
 // ---------- Chuẩn hoá ----------
 /** Mã giao dịch: trim, gộp khoảng trắng, IN HOA. */
 export function normalizeTxnCode(code: string): string {
@@ -96,6 +131,14 @@ export function emptyState(): AppState {
 export function findMember(state: AppState, id: string): Member | undefined {
   const key = normalizeMemberId(id)
   return state.members.find((m) => m.id === key)
+}
+
+/** Mở thẻ bằng mã thành viên hoặc SĐT (bỏ khoảng trắng/dấu chấm). */
+export function findMemberByIdOrPhone(state: AppState, query: string): Member | undefined {
+  const byId = findMember(state, query)
+  if (byId) return byId
+  const phone = normalizePhone(query)
+  return /^\d{9,11}$/.test(phone) ? state.members.find((m) => m.phone === phone) : undefined
 }
 
 export function findReward(state: AppState, id: string): Reward | undefined {
