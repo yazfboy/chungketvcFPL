@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowRight, CircleAlert, Sparkles } from 'lucide-react'
+import { ArrowRight, CircleAlert, ScanLine, Sparkles } from 'lucide-react'
+import { ScanSheet } from '../../components/ScanSheet'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Field, inputClass } from '../../components/ui/Field'
 import { Button } from '../../components/ui/Button'
@@ -58,6 +59,7 @@ function EarnForm() {
   const [code, setCode] = useState(params.get('gd') ?? '')
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [shake, setShake] = useState(0)
+  const [scanOpen, setScanOpen] = useState(false)
 
   const memberRef = useRef<HTMLInputElement>(null)
   const amountRef = useRef<HTMLInputElement>(null)
@@ -162,7 +164,7 @@ function EarnForm() {
               </span>
             }
           >
-            {/* pr-14: chừa chỗ nút quét QR bằng camera (phase 3) */}
+            <div className="relative">
             <input
               ref={memberRef}
               id="ma-tv"
@@ -181,7 +183,37 @@ function EarnForm() {
               enterKeyHint="next"
               aria-invalid={showNotFound}
             />
+            <button
+              type="button"
+              onClick={() => setScanOpen(true)}
+              aria-label="Quét QR thẻ thành viên bằng camera"
+              className="absolute top-0.5 right-0.5 flex h-11 w-11 items-center justify-center rounded-[8px] text-accent"
+            >
+              <ScanLine size={20} strokeWidth={1.75} aria-hidden />
+            </button>
+            </div>
           </Field>
+          <ScanSheet
+            open={scanOpen}
+            title="Quét QR thẻ thành viên"
+            hint="Đưa mã QR trên thẻ vào khung. Hoặc tải ảnh QR (VD: QR-KT-004.png)."
+            onClose={() => setScanOpen(false)}
+            onManual={() => {
+              setScanOpen(false)
+              window.setTimeout(() => memberRef.current?.focus(), 50)
+            }}
+            onResult={(text) => {
+              const id = normalizeMemberId(text)
+              setScanOpen(false)
+              setMemberInput(id)
+              setMemberTouched(true)
+              setSubmitError(null)
+              if (findMember(state, id)) {
+                feedbackSuccess()
+                window.setTimeout(() => amountRef.current?.focus(), 50)
+              } else feedbackError()
+            }}
+          />
 
           <AnimatePresence initial={false}>
             {member && oldTier && (

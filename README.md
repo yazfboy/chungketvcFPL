@@ -17,6 +17,10 @@ Thẻ thành viên tích điểm cho cửa hàng: khách xem thẻ/hạng/ưu đ
 - **Quầy · Dữ liệu** (nút ⋯): Nạp dữ liệu mẫu, Xóa toàn bộ dữ liệu, 5 ca kiểm tra của BTC với nút “Thử ca này”.
 - Lưu trên máy bằng `localStorage` (khoá `tem:v1`), dữ liệu hỏng → tự khởi tạo lại.
 
+### Phase 3 — mở rộng & điểm thưởng
+- **Màn mở đầu** (~1,5s, chạm để bỏ qua, 1 lần mỗi phiên, tắt khi bật giảm chuyển động). Xem lại: menu ⋯ của Quầy → “Xem lại màn mở đầu”, hoặc thêm `?intro=1` vào URL.
+- **Quét QR ở Quầy** (icon camera trong ô mã thành viên): camera sau + **Tải ảnh QR lên** (dùng ảnh QR tải từ tab Thẻ hoặc sheet KT_MaQR). Lỗi quyền camera / không HTTPS / ảnh không có QR đều có thông báo và nút “Nhập tay”.
+
 ## Thể lệ (nguồn duy nhất: `src/lib/rules.ts`)
 - Tích điểm: **10.000đ = 1 điểm**, làm tròn xuống. Số tiền hợp lệ 10.000đ – 1.000.000.000đ.
 - Hạng theo điểm hiện tại: **Đồng** < 1.000 · **Bạc** 1.000–4.999 · **Vàng** ≥ 5.000.
