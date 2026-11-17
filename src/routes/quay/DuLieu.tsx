@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Play, Volume2, VolumeX } from 'lucide-react'
+import { CircleCheck, CircleX, ListChecks, Play, Volume2, VolumeX } from 'lucide-react'
+import { runSelfCheck, type CheckResult } from '../../lib/selfcheck'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
 import { SampleTag } from '../../components/ui/SampleTag'
@@ -9,7 +10,7 @@ import { useStore } from '../../store/AppStore'
 import { saveRole } from '../../store/storage'
 import { SAMPLE_MEMBER_COUNT, TEST_CASES, type TestCase } from '../../lib/seed'
 import { formatNumber, formatVnd } from '../../lib/format'
-import { feedbackSuccess, isSoundOn, setSoundOn } from '../../lib/feedback'
+import { feedbackError, feedbackSuccess, isSoundOn, setSoundOn } from '../../lib/feedback'
 
 type Confirm = null | 'load' | 'clear'
 
@@ -19,6 +20,14 @@ export default function DuLieu() {
   const navigate = useNavigate()
   const [confirm, setConfirm] = useState<Confirm>(null)
   const [sound, setSound] = useState(isSoundOn)
+  const [checks, setChecks] = useState<CheckResult[] | null>(null)
+
+  function runChecks() {
+    const res = runSelfCheck()
+    setChecks(res)
+    if (res.every((r) => r.pass)) feedbackSuccess()
+    else feedbackError()
+  }
 
   function doLoad() {
     loadSample()
@@ -95,11 +104,35 @@ export default function DuLieu() {
 
         <section>
           <h2 className="text-lg font-bold tracking-[-0.02em]">Ca kiểm tra của BTC</h2>
-          <p className="mt-1 text-sm text-muted">Từ sheet KT_CaKiemTra. Bấm “Thử ca này” để mở đúng màn và điền sẵn dữ liệu.</p>
+          <p className="mt-1 text-sm text-muted">
+            Từ sheet KT_CaKiemTra. “Chạy 5 ca” kiểm tra tự động bằng quy tắc của app trên bản sao dữ liệu mẫu (không đổi dữ liệu thật). “Thử ca này” mở đúng màn và điền sẵn.
+          </p>
+          <Button full className="mt-3 min-h-[52px]" onClick={runChecks}>
+            <ListChecks size={20} strokeWidth={1.75} aria-hidden /> Chạy 5 ca kiểm tra BTC
+          </Button>
+          {checks && (
+            <p role="status" className={`num mt-3 text-base font-bold ${checks.every((c) => c.pass) ? 'text-success' : 'text-danger'}`}>
+              {checks.filter((c) => c.pass).length}/{checks.length} ca đạt
+            </p>
+          )}
           <ul className="mt-3 flex flex-col gap-3">
-            {TEST_CASES.map((tc) => (
+            {TEST_CASES.map((tc) => {
+              const res = checks?.find((c) => c.id === tc.id)
+              return (
               <li key={tc.id} className="rounded-[14px] border border-line bg-surface p-4">
-                <p className="num text-sm font-semibold text-accent">{tc.id}</p>
+                <p className="num flex items-center justify-between text-sm font-semibold text-accent">
+                  {tc.id}
+                  {res &&
+                    (res.pass ? (
+                      <span className="flex items-center gap-1 text-success">
+                        <CircleCheck size={20} strokeWidth={1.75} aria-hidden /> Đạt
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-danger">
+                        <CircleX size={20} strokeWidth={1.75} aria-hidden /> Chưa đạt
+                      </span>
+                    ))}
+                </p>
                 <p className="mt-0.5 font-semibold">{tc.situation}</p>
                 <p className="num mt-1 text-sm text-muted">
                   {[tc.memberId, tc.ref !== tc.memberId ? tc.ref : null, tc.amount ? formatVnd(tc.amount) : null]
@@ -110,11 +143,18 @@ export default function DuLieu() {
                   <span className="text-muted">Mong đợi: </span>
                   {tc.expected}
                 </p>
+                {res && (
+                  <p className={`num mt-1 text-sm ${res.pass ? '' : 'text-danger'}`}>
+                    <span className="text-muted">Thực tế: </span>
+                    {res.actual}
+                  </p>
+                )}
                 <Button variant="secondary" full className="mt-3" onClick={() => tryCase(tc)}>
                   <Play size={20} strokeWidth={1.75} aria-hidden /> Thử ca này
                 </Button>
               </li>
-            ))}
+              )
+            })}
           </ul>
         </section>
 

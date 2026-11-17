@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { computeStats } from './stats'
 import { buildSampleState } from './seed'
 import { emptyState, redeem } from './rules'
+import { runSelfCheck } from './selfcheck'
 
 describe('Thống kê mini', () => {
   it('tính đúng trên dữ liệu mẫu BTC', () => {
@@ -24,6 +25,17 @@ describe('Thống kê mini', () => {
     if (!r.ok) throw new Error(r.error)
     const s = computeStats(r.state)
     expect([s.pointsRedeemed, s.vouchersIssued, s.vouchersUsed]).toEqual([700, 1, 0])
+  })
+
+  it('tự kiểm tra: cả 5 ca BTC đạt', () => {
+    const results = runSelfCheck()
+    expect(results.map((r) => [r.id, r.pass])).toEqual([
+      ['TC-KT-01', true],
+      ['TC-KT-02', true],
+      ['TC-KT-03', true],
+      ['TC-KT-04', true],
+      ['TC-KT-05', true],
+    ])
   })
 
   it('state rỗng không lỗi', () => {
