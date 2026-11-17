@@ -12,7 +12,15 @@ import {
 import type { AppState, Member, Result } from '../lib/types'
 import { emptyState, findMember } from '../lib/rules'
 import { buildSampleState } from '../lib/seed'
-import { STATE_KEY, loadAppState, loadCurrentMemberId, saveAppState, saveCurrentMemberId } from './storage'
+import {
+  STATE_KEY,
+  loadAppState,
+  loadCurrentMemberId,
+  loadQuayAuthed,
+  saveAppState,
+  saveCurrentMemberId,
+  saveQuayAuthed,
+} from './storage'
 import { useToast } from '../components/ui/Toast'
 
 type Action = { type: 'set'; state: AppState }
@@ -31,6 +39,23 @@ interface Store {
   /** Thành viên đang xem ở vai Thành viên — undefined nếu chưa chọn hoặc mã không còn tồn tại. */
   currentMember: Member | undefined
   setCurrentMemberId: (id: string | null) => void
+  /** Cổng Quầy mô phỏng (lib/auth.ts) — không phải bảo mật thật. */
+  quayAuthed: boolean
+  setQuayAuthed: (on: boolean) => void
+}
+
+/** Mở app thẳng vào URL Quầy (deep link) → tự đăng nhập bằng tài khoản demo, không chặn giám khảo. */
+function initialQuayAuthed(): boolean {
+  if (loadQuayAuthed()) return true
+  try {
+    if (window.location.hash.startsWith('#/quay')) {
+      saveQuayAuthed(true)
+      return true
+    }
+  } catch {
+    /* bỏ qua */
+  }
+  return false
 }
 
 const StoreContext = createContext<Store | null>(null)
@@ -41,6 +66,11 @@ let corruptionReported = false
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initial.state)
   const [currentId, setCurrentId] = useState<string | null>(loadCurrentMemberId)
+  const [quayAuthed, setQuayAuthedState] = useState(initialQuayAuthed)
+  const setQuayAuthed = useCallback((on: boolean) => {
+    saveQuayAuthed(on)
+    setQuayAuthedState(on)
+  }, [])
   const ref = useRef(state)
   const toast = useToast()
 
@@ -69,8 +99,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const loadSample = useCallback(() => {
     const s = buildSampleState()
     commit(s)
+    // "Nạp dữ liệu mẫu" là lối vào chính của giám khảo → tự đăng nhập Quầy bằng tài khoản demo.
+    setQuayAuthed(true)
     return s
-  }, [commit])
+  }, [commit, setQuayAuthed])
 
   const clearAll = useCallback(() => commit(emptyState()), [commit])
 
@@ -113,8 +145,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       clearAll,
       currentMember,
       setCurrentMemberId,
+      quayAuthed,
+      setQuayAuthed,
     }),
-    [state, run, loadSample, clearAll, currentMember, setCurrentMemberId],
+    [state, run, loadSample, clearAll, currentMember, setCurrentMemberId, quayAuthed, setQuayAuthed],
   )
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
 }

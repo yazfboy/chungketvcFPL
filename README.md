@@ -26,6 +26,7 @@ Thẻ thành viên tích điểm cho cửa hàng: khách xem thẻ/hạng/ưu đ
 - **Đồng bộ 2 đầu thời gian thực**: mở vai Thành viên ở tab A, Quầy ở tab B (cùng trình duyệt) → cộng điểm ở B, thẻ ở A tự cập nhật điểm, màu hạng và màn chúc mừng, không cần tải lại (sự kiện `storage` của localStorage).
 - **Tự kiểm tra** (Quầy → ⋯ → Dữ liệu): nút “Chạy 5 ca kiểm tra BTC” chạy TC-KT-01..05 bằng `rules.ts` trên bản sao dữ liệu mẫu (không đụng dữ liệu thật), hiện kết quả mong đợi / thực tế / Đạt. Có công tắc âm thanh bíp.
 - **Quầy thông minh** (`src/lib/counter.ts`): ô mã thành viên nhận cả SĐT đầy đủ hoặc 4 số cuối SĐT (khớp 1 → chọn luôn, khớp nhiều → danh sách chọn nhanh). Khi khách còn dưới 30% khoảng điểm để lên hạng: “Mua thêm 180.000đ để lên hạng …”.
+- **Đăng nhập Quầy** (bản nhẹ): xem mục Tài khoản demo.
 
 ## Thể lệ (nguồn duy nhất: `src/lib/rules.ts`)
 - Tích điểm: **10.000đ = 1 điểm**, làm tròn xuống. Số tiền hợp lệ 10.000đ – 1.000.000.000đ.
@@ -53,7 +54,9 @@ Deploy tự động lên GitHub Pages bằng GitHub Actions mỗi lần push lê
 - Thành viên/giao dịch tạo mới trong app là dữ liệu mô phỏng lưu trên máy.
 
 ## Tài khoản demo
-Không cần đăng nhập. Dùng mã `KT-004`.
+- **Quầy:** `admin` / `XSon` (đã điền sẵn ở màn “Đăng nhập Quầy”, chỉ cần bấm “Vào Quầy”). Mở thẳng link Quầy, bấm “Nạp dữ liệu mẫu” hoặc “Thử ca này” đều tự đăng nhập bằng tài khoản này. Đăng xuất: menu ⋯ của Quầy.
+- **Thành viên:** không cần đăng nhập — mở thẻ bằng mã `KT-004` hoặc SĐT `0900001004`.
+- Lưu ý: đây là **cổng phân vai mô phỏng** cho bản demo web tĩnh (kiểm tra ngay trên trình duyệt, `src/lib/auth.ts`), **không phải bảo mật thật**. Bản thật cần xác thực phía server.
 
 ## Cấu trúc thư mục
 ```
@@ -61,7 +64,7 @@ data/mau.xlsx             # file mẫu BTC (nguồn)
 scripts/xlsx-to-json.mjs  # Excel → JSON
 src/
   App.tsx, main.tsx       # HashRouter, header chuyển vai, tab bar
-  routes/quay/            # Cộng điểm, Thành viên, Chi tiết, Dữ liệu
+  routes/quay/            # Đăng nhập, Cộng điểm, Voucher, Thành viên, Chi tiết, Thống kê, Dữ liệu
   routes/tv/              # TvLayout (chọn thẻ), Vào thẻ, Thẻ, Ưu đãi, Lịch sử, Thể lệ
   components/             # TierChip, MemberMiniCard, TxnList, SampleLoadBlock...
   components/ui/          # Button, Field, Toast, Empty, PageHeader...

@@ -77,6 +77,26 @@ export function saveCurrentMemberId(id: string | null): void {
   }
 }
 
+const QUAY_AUTH_KEY = 'tem:quayAuth'
+
+/** Trạng thái "đã đăng nhập Quầy" (cổng mô phỏng, xem lib/auth.ts). */
+export function loadQuayAuthed(): boolean {
+  try {
+    return localStorage.getItem(QUAY_AUTH_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+export function saveQuayAuthed(on: boolean): void {
+  try {
+    if (on) localStorage.setItem(QUAY_AUTH_KEY, '1')
+    else localStorage.removeItem(QUAY_AUTH_KEY)
+  } catch {
+    /* bỏ qua */
+  }
+}
+
 /** Hạng mà vai Thành viên đã "thấy" cho từng mã — để chỉ chúc mừng lên hạng lần đầu. */
 export function loadSeenTier(memberId: string): string | null {
   try {

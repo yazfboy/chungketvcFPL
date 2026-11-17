@@ -21,6 +21,9 @@ import TvThe from './routes/tv/The'
 import TvUuDai from './routes/tv/UuDai'
 import TvLichSu from './routes/tv/LichSu'
 import TvTheLe from './routes/tv/TheLe'
+import DangNhap from './routes/quay/DangNhap'
+import { useStore } from './store/AppStore'
+import { useToast } from './components/ui/Toast'
 
 const TABS: Record<Role, TabItem[]> = {
   tv: [
@@ -70,6 +73,8 @@ export default function App() {
   const [params, setParams] = useSearchParams()
   const reduce = useReducedMotion()
   const role: Role = location.pathname.startsWith('/quay') ? 'quay' : 'tv'
+  const { quayAuthed, setQuayAuthed } = useStore()
+  const toast = useToast()
 
   const [intro, setIntro] = useState<IntroPhase>(() =>
     !prefersReducedMotion() && (introRequestedByUrl() || !sessionFlag('intro')) ? 'hold' : 'off',
@@ -126,6 +131,14 @@ export default function App() {
             navigate(HOME[r])
           }}
           onReplayIntro={playIntro}
+          onLogout={
+            quayAuthed
+              ? () => {
+                  setQuayAuthed(false)
+                  toast.show('Đã đăng xuất Quầy')
+                }
+              : undefined
+          }
         />
         <div className="mx-auto min-h-[calc(100dvh-60px)] max-w-[480px] bg-bg">
           <main style={{ paddingBottom: 'calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 24px)' }}>
@@ -136,6 +149,10 @@ export default function App() {
               animate={pageTransition.animate}
               transition={pageTransition.transition}
             >
+              {/* Cổng Quầy mô phỏng: chưa đăng nhập → màn đăng nhập (giữ nguyên URL, vào xong hiện đúng màn). */}
+              {role === 'quay' && !quayAuthed ? (
+                <DangNhap />
+              ) : (
               <Routes location={location}>
                 <Route path="/" element={<Navigate to={HOME[loadRole()]} replace />} />
                 <Route path="/tv" element={<TvLayout />}>
@@ -153,6 +170,7 @@ export default function App() {
                 <Route path="/quay/du-lieu" element={<DuLieu />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
+              )}
             </motion.div>
           </main>
         </div>
