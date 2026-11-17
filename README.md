@@ -20,6 +20,7 @@ Thẻ thành viên tích điểm cho cửa hàng: khách xem thẻ/hạng/ưu đ
 ### Phase 3 — mở rộng & điểm thưởng
 - **Màn mở đầu** (~1,5s, chạm để bỏ qua, 1 lần mỗi phiên, tắt khi bật giảm chuyển động). Xem lại: menu ⋯ của Quầy → “Xem lại màn mở đầu”, hoặc thêm `?intro=1` vào URL.
 - **Quét QR ở Quầy** (icon camera trong ô mã thành viên): camera sau + **Tải ảnh QR lên** (dùng ảnh QR tải từ tab Thẻ hoặc sheet KT_MaQR). Lỗi quyền camera / không HTTPS / ảnh không có QR đều có thông báo và nút “Nhập tay”.
+- **Quầy · Voucher**: nhập/quét mã voucher → xem ưu đãi, chủ voucher, trạng thái → “Xác nhận sử dụng” (ghi lịch sử “Dùng voucher”). Voucher đã dùng báo thời điểm dùng. Ví phía Thành viên có nút “Hiện QR” cho voucher chưa dùng.
 
 ## Thể lệ (nguồn duy nhất: `src/lib/rules.ts`)
 - Tích điểm: **10.000đ = 1 điểm**, làm tròn xuống. Số tiền hợp lệ 10.000đ – 1.000.000.000đ.

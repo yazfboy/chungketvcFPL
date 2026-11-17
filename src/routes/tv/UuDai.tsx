@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { CircleAlert, Copy, Gift, TicketX, TriangleAlert } from 'lucide-react'
+import { CircleAlert, Copy, Gift, QrCode, TicketX, TriangleAlert } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
 import { Empty } from '../../components/ui/Empty'
@@ -210,6 +211,7 @@ function ConfirmRedeemSheet({
 
 function VoucherTicket({ voucher, reward, highlight }: { voucher: Voucher; reward?: Reward; highlight: boolean }) {
   const toast = useToast()
+  const [qrOpen, setQrOpen] = useState(false)
   const used = voucher.status === 'da_dung'
 
   async function copy() {
@@ -259,8 +261,22 @@ function VoucherTicket({ voucher, reward, highlight }: { voucher: Voucher; rewar
           <p className="num mt-1 text-sm text-muted">
             {used && voucher.usedAt ? `Đã dùng lúc ${formatDateTime(voucher.usedAt)}` : `Đổi lúc ${formatDateTime(voucher.createdAt)}`}
           </p>
+          {!used && (
+            <Button variant="secondary" full className="mt-3" onClick={() => setQrOpen(true)}>
+              <QrCode size={20} strokeWidth={1.75} aria-hidden /> Hiện QR
+            </Button>
+          )}
         </div>
       </div>
+      <Sheet open={qrOpen} title="QR voucher" onClose={() => setQrOpen(false)}>
+        <div className="flex flex-col items-center pb-2 text-center">
+          <div className="rounded-[14px] border border-line bg-white p-2">
+            <QRCodeSVG value={voucher.code} size={220} level="M" marginSize={4} title={`QR ${voucher.code}`} />
+          </div>
+          <p className="mt-4 font-mono text-[22px] leading-none font-semibold tracking-[0.08em]">{voucher.code}</p>
+          <p className="mt-2 text-sm text-muted">{reward?.name} · Đưa mã này cho nhân viên quầy quét</p>
+        </div>
+      </Sheet>
     </motion.li>
   )
 }
