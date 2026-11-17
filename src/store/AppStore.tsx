@@ -12,7 +12,7 @@ import {
 import type { AppState, Member, Result } from '../lib/types'
 import { emptyState, findMember } from '../lib/rules'
 import { buildSampleState } from '../lib/seed'
-import { loadAppState, loadCurrentMemberId, saveAppState, saveCurrentMemberId } from './storage'
+import { STATE_KEY, loadAppState, loadCurrentMemberId, saveAppState, saveCurrentMemberId } from './storage'
 import { useToast } from '../components/ui/Toast'
 
 type Action = { type: 'set'; state: AppState }
@@ -77,6 +77,24 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const setCurrentMemberId = useCallback((id: string | null) => {
     setCurrentId(id)
     saveCurrentMemberId(id)
+  }, [])
+
+  // Đồng bộ 2 đầu thời gian thực: tab khác (VD: Quầy) ghi localStorage → tab này nạp lại state, không reload.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.storageArea !== localStorage || e.key !== STATE_KEY) return
+      if (e.newValue == null) {
+        ref.current = emptyState()
+        dispatch({ type: 'set', state: ref.current })
+        return
+      }
+      const loaded = loadAppState()
+      if (loaded.corrupted) return
+      ref.current = loaded.state
+      dispatch({ type: 'set', state: loaded.state })
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
   }, [])
 
   const currentMember = currentId ? findMember(state, currentId) : undefined
