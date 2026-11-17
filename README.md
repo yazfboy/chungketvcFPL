@@ -25,6 +25,7 @@ Thẻ thành viên tích điểm cho cửa hàng: khách xem thẻ/hạng/ưu đ
 - **Hiệu ứng**: cộng điểm → “+N” nổi lên, số dư đếm tăng 400ms; lên hạng → màn chúc mừng ~1,6s (thẻ chuyển màu hạng cũ → mới, chạm để đóng) ở Quầy và ở vai Thành viên khi thấy hạng mới lần đầu. Tôn trọng `prefers-reduced-motion`.
 - **Đồng bộ 2 đầu thời gian thực**: mở vai Thành viên ở tab A, Quầy ở tab B (cùng trình duyệt) → cộng điểm ở B, thẻ ở A tự cập nhật điểm, màu hạng và màn chúc mừng, không cần tải lại (sự kiện `storage` của localStorage).
 - **Tự kiểm tra** (Quầy → ⋯ → Dữ liệu): nút “Chạy 5 ca kiểm tra BTC” chạy TC-KT-01..05 bằng `rules.ts` trên bản sao dữ liệu mẫu (không đụng dữ liệu thật), hiện kết quả mong đợi / thực tế / Đạt. Có công tắc âm thanh bíp.
+- **Quầy thông minh** (`src/lib/counter.ts`): ô mã thành viên nhận cả SĐT đầy đủ hoặc 4 số cuối SĐT (khớp 1 → chọn luôn, khớp nhiều → danh sách chọn nhanh). Khi khách còn dưới 30% khoảng điểm để lên hạng: “Mua thêm 180.000đ để lên hạng …”.
 
 ## Thể lệ (nguồn duy nhất: `src/lib/rules.ts`)
 - Tích điểm: **10.000đ = 1 điểm**, làm tròn xuống. Số tiền hợp lệ 10.000đ – 1.000.000.000đ.

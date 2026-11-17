@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import { CountUp } from '../../components/CountUp'
 import { useCelebrate } from '../../components/TierCelebration'
-import { ArrowRight, CircleAlert, ScanLine, Sparkles } from 'lucide-react'
+import { ArrowRight, CircleAlert, ScanLine, Sparkles, TrendingUp } from 'lucide-react'
+import { matchCounterInput, upsellHint } from '../../lib/counter'
 import { ScanSheet } from '../../components/ScanSheet'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Field, inputClass } from '../../components/ui/Field'
@@ -20,6 +21,7 @@ import {
   generateTxnCode,
   getTier,
   normalizeMemberId,
+  normalizePhone,
   normalizeTxnCode,
   pointsForAmount,
   tierRank,
@@ -76,8 +78,11 @@ function EarnForm() {
     else if (!params.get('tien')) amountRef.current?.focus()
   }, [params])
 
-  const member = memberInput.trim() ? findMember(state, memberInput) : undefined
-  const showNotFound = !!memberInput.trim() && !member && (memberTouched || normalizeMemberId(memberInput).length >= 6)
+  // Nhận mã KT-xxx, SĐT đầy đủ hoặc 4 số cuối: khớp 1 → chọn luôn; khớp nhiều → chọn nhanh.
+  const matches = matchCounterInput(state, memberInput)
+  const member = matches.length === 1 ? matches[0] : undefined
+  const showNotFound =
+    !!memberInput.trim() && matches.length === 0 && (memberTouched || normalizeMemberId(memberInput).length >= 6)
 
   const amount = parseDigits(amountText)
   const amountError = validateAmount(amount)
@@ -90,12 +95,13 @@ function EarnForm() {
   const oldTier = member ? getTier(member.points) : null
   const newTier = member ? getTier(member.points + points) : null
   const tierUp = !!oldTier && !!newTier && tierRank(newTier) > tierRank(oldTier)
+  const upsell = member ? upsellHint(member.points + points) : null
 
   const canSubmit = !!member && !amountError && normalizeTxnCode(code).length > 0
 
   function submit() {
-    if (!canSubmit || amount == null) return
-    const r = run((s) => earnPoints(s, { memberId: memberInput, amount, txnCode: code }))
+    if (!canSubmit || amount == null || !member) return
+    const r = run((s) => earnPoints(s, { memberId: member.id, amount, txnCode: code }))
     if (!r.ok) {
       setSubmitError(r.error)
       setShake((n) => n + 1)
@@ -119,7 +125,7 @@ function EarnForm() {
     if (e.key !== 'Enter') return
     e.preventDefault()
     setMemberTouched(true)
-    if (findMember(state, memberInput)) amountRef.current?.focus()
+    if (matchCounterInput(state, memberInput).length === 1) amountRef.current?.focus()
   }
 
   function onAmountKey(e: KeyboardEvent<HTMLInputElement>) {
@@ -151,7 +157,7 @@ function EarnForm() {
         <div>
           <Field
             id="ma-tv"
-            label="Mã thành viên"
+            label="Mã thành viên hoặc SĐT"
             error={showNotFound ? 'Không tìm thấy thành viên' : undefined}
             hint={
               <span className="flex items-center gap-2">
@@ -182,7 +188,7 @@ function EarnForm() {
               }}
               onBlur={() => setMemberTouched(true)}
               onKeyDown={onMemberKey}
-              placeholder="VD: KT-004"
+              placeholder="KT-004 · SĐT · 4 số cuối"
               autoComplete="off"
               autoCapitalize="characters"
               spellCheck={false}
@@ -220,6 +226,35 @@ function EarnForm() {
               } else feedbackError()
             }}
           />
+
+          {matches.length > 1 && (
+            <div className="mt-3">
+              <p className="text-sm text-muted">{matches.length} thành viên có SĐT đuôi {normalizePhone(memberInput)} — chọn một:</p>
+              <ul className="mt-2 divide-y divide-line overflow-hidden rounded-[14px] border border-line bg-surface">
+                {matches.map((m) => (
+                  <li key={m.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMemberInput(m.id)
+                        setMemberTouched(true)
+                        amountRef.current?.focus()
+                      }}
+                      className="flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left active:bg-bg"
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-semibold">{m.name}</span>
+                        <span className="num block text-sm text-muted">
+                          {m.id} · {maskPhone(m.phone)}
+                        </span>
+                      </span>
+                      <TierChip tier={getTier(m.points)} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {member && oldTier && (
               <motion.div
@@ -341,6 +376,13 @@ function EarnForm() {
               )}
             </p>
           </div>
+        )}
+
+        {upsell && (
+          <p className="num -mt-2 flex items-center gap-2 text-sm font-medium">
+            <TrendingUp size={16} strokeWidth={1.75} className="shrink-0 text-accent" aria-hidden />
+            Mua thêm {formatVnd(upsell.amount)} để lên hạng {upsell.tier.name}
+          </p>
         )}
 
         {generalError && (
